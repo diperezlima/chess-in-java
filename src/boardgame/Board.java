@@ -43,6 +43,19 @@ public class Board {
 		piece.position = position;
 	}
 	
+	public Piece removePiece(Position position) {
+		if (!positionExists(position)) { // verify if the position is valid on the board
+			throw new BoardException("Position not on the board");
+		}
+		if (piece(position) == null) {// if this is true, there are no piece on the position informed
+			return null;
+		}
+		Piece aux = piece(position);
+		aux.position = null; //selected piece will be null, so, removed
+		pieces[position.getRow()][position.getColumn()] = null; //make the selected position as null, indicating that there are no pieces on it
+		return aux;
+	}
+	
 	private boolean positionExists(int row, int column) { //position doesn't exists if it's outside of the board array
 		return row >= 0 && row < rows && column >= 0 && column < columns;
 	}

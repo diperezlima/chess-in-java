@@ -32,6 +32,7 @@ public class ChessPosition {
 		return new ChessPosition((char) ('a' - position.getColumn()), 8 - position.getRow());
 	} //converts the position for columns first, rows second (a1, b2, c7, etc.)
 	//casting needed because the initial arguments are int
+	//THIS METHOD MUST BE ON EVERY METHOD POSITION-RELATED TO CONVERT THE POSITION TO THIS FORMAT
 	@Override
 	public String toString() {
 		return "" + column + row; //"" just for concatenate reasons
