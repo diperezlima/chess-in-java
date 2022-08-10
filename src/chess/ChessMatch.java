@@ -29,6 +29,7 @@ public class ChessMatch {
 		Position source = sourcePosition.toPosition(); //convert sourcePosition to the matrix
 		Position target = targetPosition.toPosition();//convert targetPosition to the matrix
 		validateSourcePosition(source);
+		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
 		return (ChessPiece)capturedPiece; //necessary casting because capturedPiece was type Piece, and not ChessPiece as intended
 	}
@@ -48,12 +49,18 @@ public class ChessMatch {
 			throw new ChessException("There is no possible moves for the chosen piece");			
 		}
 	}
+	
+	private void validateTargetPosition(Position source, Position target) {
+		if (!board.piece(source).possibleMove(target)) { //if the possible move on target position is false,
+			throw new ChessException("The chosen piece cannot move to target position");
+		}
+	}
 
 	private void placeNewPiece(char column, int row, ChessPiece piece) {// method to set a piece on the board
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
 	}// place created piece on board considering chess positions
 
-	private void InicialSetup() { // method to iniciate the match putting them on the board
+	private void InicialSetup() { // method to initiate the match putting them on the board
 		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
 		placeNewPiece('c', 2, new Rook(board, Color.WHITE));
 		placeNewPiece('d', 2, new Rook(board, Color.WHITE));
@@ -67,6 +74,6 @@ public class ChessMatch {
 		placeNewPiece('e', 7, new Rook(board, Color.BLACK));
 		placeNewPiece('e', 8, new Rook(board, Color.BLACK));
 		placeNewPiece('d', 8, new King(board, Color.BLACK));
-	}// inicial setup updated to placeNewPiece method
+	}// initial setup updated to placeNewPiece method
 
 }
