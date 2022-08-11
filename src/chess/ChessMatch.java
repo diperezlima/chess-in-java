@@ -9,10 +9,22 @@ import chess.pieces.Rook;
 public class ChessMatch {
 
 	private Board board;
+	private int turn;
+	private Color currentPlayer;
 
 	public ChessMatch() {
-		board = new Board(8, 8);
+		board = new Board(8, 8); //the chess board is a 8-8 board
+		turn = 1; //game starts at turn 1
+		currentPlayer = Color.WHITE; // chess game starts with white player
 		InicialSetup();
+	}
+	
+	public int getTurn() {
+		return turn;
+	}
+	
+	public Color getCurrentPlayer() {
+		return currentPlayer;
 	}
 
 	public ChessPiece[][] getPieces() { // array os piece corresponding to the match
@@ -37,6 +49,7 @@ public class ChessMatch {
 		validateSourcePosition(source);
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target);
+		nextTurn();
 		return (ChessPiece)capturedPiece; //necessary casting because capturedPiece was type Piece, and not ChessPiece as intended
 	}
 	
@@ -51,6 +64,9 @@ public class ChessMatch {
 		if (!board.thereIsAPiece(position)) {
 			throw new ChessException("There is no piece on source position");
 		}
+		if (currentPlayer != ((ChessPiece) board.piece(position)).getColor()) {
+			throw new ChessException("The chosen piece is not yours");
+		}
 		if (!board.piece(position).isThereAnyPossibleMove()) {
 			throw new ChessException("There is no possible moves for the chosen piece");			
 		}
@@ -60,6 +76,11 @@ public class ChessMatch {
 		if (!board.piece(source).possibleMove(target)) { //if the possible move on target position is false,
 			throw new ChessException("The chosen piece cannot move to target position");
 		}
+	}
+	
+	private void nextTurn() { 
+		turn++;// each time turn shifts (turn++), 
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE; //selected player to move will change
 	}
 
 	private void placeNewPiece(char column, int row, ChessPiece piece) {// method to set a piece on the board
