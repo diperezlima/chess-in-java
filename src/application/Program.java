@@ -18,7 +18,7 @@ public class Program {
 		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
 		List<ChessPiece> captured = new ArrayList<ChessPiece>();
-		while (true) {
+		while (!chessMatch.getCheckMate()) {
 			try {
 				UI.clearScreen();
 				UI.printMatch(chessMatch, captured); //changed since printMatch has the printBoard method
@@ -31,7 +31,7 @@ public class Program {
 				UI.printBoard(chessMatch.getPieces(), possibleMoves);
 				
 				System.out.println();
-		System.out.println("Target: ");
+				System.out.println("Target: ");
 				ChessPosition target = UI.readChessPosition(sc); //read final position from scanner
 				
 				ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
@@ -49,6 +49,8 @@ public class Program {
 				sc.nextLine();
 			}
 		}
+		UI.clearScreen(); // when checkmate gets true, clear screen and show board status
+		UI.printMatch(chessMatch, captured);
 	}
 
 }

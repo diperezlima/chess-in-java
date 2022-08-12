@@ -16,6 +16,7 @@ public class ChessMatch {
 	private int turn;
 	private Color currentPlayer;
 	private boolean check;
+	private boolean checkMate;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();
 	private List<Piece> capturedPieces = new ArrayList<>();
@@ -37,6 +38,10 @@ public class ChessMatch {
 	
 	public boolean getCheck() {
 		return check;
+	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
 	}
 
 	public ChessPiece[][] getPieces() { // array os piece corresponding to the match
@@ -68,8 +73,13 @@ public class ChessMatch {
 		}
 		
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
+		if (testCheckMate(opponent(currentPlayer))) {
+			checkMate = true;
+		} 
+		else {
+			nextTurn();
+		}
 		
-		nextTurn();
 		return (ChessPiece)capturedPiece; //necessary casting because capturedPiece was type Piece, and not ChessPiece as intended
 	}
 	
@@ -143,6 +153,31 @@ public class ChessMatch {
 				return true;
 			}
 		} return false;
+	}
+	
+	private boolean testCheckMate(Color color) {
+		if (!testCheck(color)) { //if NOT on testCheck, there's no way to checkmate (one dependes on another)
+			return false;
+		}
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList()); //scan all piece with equal said color
+		for (Piece p : list) {
+			boolean[][] mat = p.possibleMoves();
+			for (int i = 0; i < board.getRows(); i++) {
+				for (int j = 0; j < board.getColumns(); j++) {//run all the board array looking for possible moves that might checkmate
+					if (mat[i][j]) {
+						Position source = ((ChessPiece)p).getChessPosition().toPosition();
+						Position target = new Position(i, j);
+						Piece capturedPiece = makeMove(source, target);// move the pieces through all the possible combinations to check if there's a way for king to escape the check status
+						boolean testCheck = testCheck(color);
+						undoMove(source, target, capturedPiece); //undo move, since it's just a test to see if there is a checkmate status
+						if (!testCheck) { //if the testcheck fails (there is movements to save the king), it's false.
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private void placeNewPiece(char column, int row, ChessPiece piece) {// method to set a piece on the board
